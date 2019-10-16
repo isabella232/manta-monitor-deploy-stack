@@ -1,0 +1,69 @@
+version: "2"
+
+volumes:
+  prometheus_data: {}
+
+services:
+  manta_monitor:
+    image: joyent/manta-monitor:buckets
+    container_name: "manta-monitor"
+    tmpfs:
+      - /opt/manta-monitor/tmp
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ports:
+      - 8090:8090
+    volumes:
+      - $HOME/.ssh/id_rsa.pub:/opt/manta-monitor/.ssh/id_rsa.pub
+      - $HOME/.ssh/id_rsa:/opt/manta-monitor/.ssh/id_rsa
+      - ./manta-monitor-config.json:/opt/manta-monitor/manta-monitor-config.json
+    environment:
+      - JAVA_ENV=development
+      - HONEYBADGER_API_KEY=fvgKNVpQhxeYJ63vA77Q
+      - CONFIG_FILE=/opt/manta-monitor/manta-monitor-config.json
+      - MANTA_USER=sachin.gupta@joyent.com
+      - MANTA_URL=https://us-east.manta.joyent.com
+      - MANTA_TIMEOUT=4000
+      - MANTA_METRIC_REPORTER_MODE=JMX
+      - MANTA_HTTP_RETRIES=3
+      - JETTY_SERVER_PORT=8090
+      - ENABLE_TLS=false
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+    ports:
+      - 9090:9090
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus'
+    depends_on:
+      - manta_monitor
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    tmpfs:
+      - /var/lib/grafana
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ports:
+      - 3000:3000
+    volumes:
+      - - ./grafana/dashboards/:/var/lib/grafana/dashboards/
+      - ./grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - ./grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
