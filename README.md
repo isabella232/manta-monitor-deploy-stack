@@ -1,7 +1,8 @@
 ## Introduction
 
-The purpose of this too is to allow the users of [manta-monitor](https://github.com/joyent/manta-monitor)
-to quickly deploy the application along with prometheus and grafana in a containerized environment
+The purpose of this tool is to allow the users of [manta-monitor](https://github.com/joyent/manta-monitor)
+to quickly deploy the application along with [prometheus](https://prometheus.io/docs/introduction/overview/)
+and [grafana](https://grafana.com/docs/guides/getting_started/) in a containerized environment
 that makes it easy for dev and functional testing of the manta object store.
 The goal is to make it easy for the manta engineers to observe latency metrics
 exposed by manta-monitor, in grafana, and quickly test the improvements.
