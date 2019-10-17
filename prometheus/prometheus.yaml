@@ -27,7 +27,7 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-            - targets: ['manta_monitor:8090']
+            - targets: ['manta-monitor:8090']
     scheme: http
     #tls_config:
     #  cert_file: /home/ubuntu/prom.crt
