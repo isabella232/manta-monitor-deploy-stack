@@ -8,5 +8,5 @@
       "maxFileSize":4096
     }
   ],
-  "testType":"dir"
+  "testType":"buckets"
 }
