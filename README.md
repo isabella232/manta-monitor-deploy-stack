@@ -69,7 +69,7 @@ export MANTA_URL=https://us-east.manta.joyent.com
       environment:
         - JAVA_ENV=development
         - HONEYBADGER_API_KEY=""
-        - CONFIG_FILE=manta:///$MANTA_USER/stor/manta-monitor-config.json
+        - CONFIG_FILE=/opt/manta-monitor/manta-monitor-config.json
         - MANTA_USER=$MANTA_USER
         - MANTA_URL=$MANTA_URL
         - MANTA_PUBLIC_KEY=$MANTA_PUBLIC_KEY
