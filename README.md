@@ -120,7 +120,7 @@ some latency metrics right out of the box.
 Open grafana UI in the browser http://localhost:3000.
 
 #### Deployment on a KVM/VM
-Open grafana UI in your local browser and navigate to the public ip address of your KVM/VM i.e http://<public-ip>:3000
+Open grafana UI in your local browser and navigate to the public ip address of your KVM/VM i.e http://{public-ip}:3000
 
 The default userid and password is admin/admin.
 
