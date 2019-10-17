@@ -39,87 +39,18 @@ export MANTA_URL=https://us-east.manta.joyent.com
   
 * [Manta Monitor Config](./manta-monitor-config.json). This json file is used by manta-monitor to configure the test load.
   By default, it is configured to test 'buckets', however, changing the 'test_type' key in the ```manta-monitor-config.json```
-  to 'dir' will configure the application to test manta directories. You can upload your config file to the MANTA_USER's 
-  stor and make it available to the application.
+  to 'dir' will configure the application to test manta directories. 
+  The tool uses [docker-compose volumes](https://docs.docker.com/compose/compose-file/compose-file-v2/#volume-configuration-reference)
+  to mount the [config file](manta-monitor-config.json) inside the container to make it available for the application.
+  To know more about the config file refer [here](https://github.com/joyent/manta-monitor/blob/master/doc/manta-monitor-deployment.md#json-configuration-file).
   
-   ```
-    mput -f manta-monitor-config.json ~~/stor/
-   ```
-   Once uploaded to the manta store, the CONFIG_FILE environment variable in the docker-compose.yml can be set as:
-   
-   ```
-    services:
-       manta-monitor:
-         image: joyent/manta-monitor:buckets
-         container_name: "manta-monitor"
-         tmpfs:
-           - /opt/manta-monitor/tmp
-         logging:
-           driver: "json-file"
-           options:
-             max-size: "10m"
-             max-file: "3"
-         ports:
-           - 8090:8090
-         environment:
-           - JAVA_ENV=development
-           - HONEYBADGER_API_KEY=""
-           - CONFIG_FILE=manta:///$MANTA_USER/stor/manta-monitor-config.json
-           - MANTA_USER=$MANTA_USER
-           - MANTA_URL=$MANTA_URL
-           - MANTA_PUBLIC_KEY=$MANTA_PUBLIC_KEY
-           - MANTA_PRIVATE_KEY=$MANTA_PRIVATE_KEY
-           - MANTA_TIMEOUT=4000
-           - MANTA_METRIC_REPORTER_MODE=JMX
-           - MANTA_HTTP_RETRIES=3
-           - JETTY_SERVER_PORT=8090
-           - ENABLE_TLS=false
-           - MANTA_TLS_INSECURE=1
-   
-   ```
+  In addition, if you want to get around using the docker volumes, then refer the *Additional Notes* at the end of this file
+  for other options.
   
-  OR
-  
-  Use [docker-compose volumes](https://docs.docker.com/compose/compose-file/compose-file-v2/#volume-configuration-reference)
-  to mount the config file inside the container to make it available for the application by adding the following below *ports*
-  in the manta-monitor service in the docker-compose.yml:
-  ```
-  services:
-    manta-monitor:
-      image: joyent/manta-monitor:buckets
-      container_name: "manta-monitor"
-      tmpfs:
-        - /opt/manta-monitor/tmp
-      logging:
-        driver: "json-file"
-        options:
-          max-size: "10m"
-          max-file: "3"
-      ports:
-        - 8090:8090
-      volumes:
-        - ./manta-monitor-config.json:/opt/manta-monitor/manta-monitor-config.json
-      environment:
-        - JAVA_ENV=development
-        - HONEYBADGER_API_KEY=""
-        - CONFIG_FILE=/opt/manta-monitor/manta-monitor-config.json
-        - MANTA_USER=$MANTA_USER
-        - MANTA_URL=$MANTA_URL
-        - MANTA_PUBLIC_KEY=$MANTA_PUBLIC_KEY
-        - MANTA_PRIVATE_KEY=$MANTA_PRIVATE_KEY
-        - MANTA_TIMEOUT=4000
-        - MANTA_METRIC_REPORTER_MODE=JMX
-        - MANTA_HTTP_RETRIES=3
-        - JETTY_SERVER_PORT=8090
-        - ENABLE_TLS=false
-        - MANTA_TLS_INSECURE=1
-  ```
-
-The above *volumes* option is best suited for local use, for instance, your desktop/laptop.
 
 ## Usage
 
-### OPTION 1: Run on your laptop
+#### OPTION 1: Run on your laptop
 
 Make sure you have met the pre-requisites from the above. Confirm the details in the docker-compose.yml file and make 
 sure that the MANTA_URL endpoint can be reached from your laptop.
@@ -129,7 +60,7 @@ $ docker-compose up -d
 ```
 The above command will pull the required images from the docker hub repository and start the containers.
 
-### OPTION 2: Run on a KVM
+#### OPTION 2: Run on a KVM
 
 You can provision a KVM in JPC and install the pre-requisites. The following is an example:
 ![](images/manta-monitor-kvm.png?raw=true)
@@ -171,6 +102,58 @@ some latency metrics right out of the box.
 
 
 ## Inspect the output
+
+#### Local deployment (for desktops/laptops)
+
 Open grafana UI in the browser http://localhost:3000.
+
+#### Deployment on a KVM/VM
+Open grafana UI in your local browser and navigate to the public ip address of your KVM/VM i.e http://<public ip>:3000
+
 The default userid and password is admin/admin.
+
 ![](images/Manta-Monitor-Grafana.png?raw=true)
+
+
+## Additional Notes
+
+#### Adding the manta-monitor CONFIG_FILE to $MANTA_USER's stor
+You can upload your config file to the MANTA_USER's stor and make it available to the application.
+  
+   ```
+    mput -f manta-monitor-config.json ~~/stor/
+   ```
+   Once uploaded to the manta store, the CONFIG_FILE environment variable in the docker-compose.yml can be set as:
+   
+   ```
+    services:
+       manta-monitor:
+         image: joyent/manta-monitor:buckets
+         container_name: "manta-monitor"
+         tmpfs:
+           - /opt/manta-monitor/tmp
+         logging:
+           driver: "json-file"
+           options:
+             max-size: "10m"
+             max-file: "3"
+         ports:
+           - 8090:8090
+         environment:
+           - JAVA_ENV=development
+           - HONEYBADGER_API_KEY=""
+           - CONFIG_FILE=manta:///$MANTA_USER/stor/manta-monitor-config.json
+           - MANTA_USER=$MANTA_USER
+           - MANTA_URL=$MANTA_URL
+           - MANTA_PUBLIC_KEY=$MANTA_PUBLIC_KEY
+           - MANTA_PRIVATE_KEY=$MANTA_PRIVATE_KEY
+           - MANTA_TIMEOUT=4000
+           - MANTA_METRIC_REPORTER_MODE=JMX
+           - MANTA_HTTP_RETRIES=3
+           - JETTY_SERVER_PORT=8090
+           - ENABLE_TLS=false
+           - MANTA_TLS_INSECURE=1
+   
+   ```
+
+However, note that the *volumes* option is best suited for local use, for instance, your desktop/laptop.
