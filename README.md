@@ -7,8 +7,9 @@ that makes it easy for dev and functional testing of the manta object store.
 The goal is to make it easy for the manta engineers to observe latency metrics
 exposed by manta-monitor, in grafana, and quickly test the improvements.
 
-## Pre-requisites
-In order to be able to use this tool make sure you have:
+## Prerequisites
+Follow the below steps before beginning to use the tool:
+#### Step 1: Install docker-compose
 * For MAC:
     * [docker-compose](https://docs.docker.com/compose/install/) installed. Follow the link to install [docker for mac](https://docs.docker.com/docker-for-mac/install/).
       The docker-compose is included in the installation.
@@ -17,9 +18,16 @@ In order to be able to use this tool make sure you have:
       For eg, on an Ubuntu KVM run:
       
       ``` # sudo apt install docker-compose ```
+     
+#### Step 2: Make sure docker server is running.
+* For MAC: Check to see if the docker for mac, installed from the above step, is running 
+* For LINUX: Check to see if the docker service is running.
+```
+# systemctl status docker 
+```
+#### Step 3: Set the environment variables.
       
 The following applies to both the OS:
-* Environment variables: Make sure you have exported the relevant MANTA env variables as:
 
 ``` 
 export MANTA_USER=<The manta user name>
@@ -30,6 +38,10 @@ export MANTA_PRIVATE_KEY=$(cat $HOME/.ssh/id_rsa | base64 -w0) #FOR LINUX
 export MANTA_URL=<The complete manta url or https://ip address of the loadbalancer >
 
 ```
+#### Step 4 (OPTIONAL): Modify the docker-compose.yml
+Once the above steps are completed, the provided docker-compose.yml file should be ready to go on to using the tool,
+however, you might want to check for the below env variables to do change in the docker-compose file.
+
 * [Honeybadger](https://github.com/joyent/manta-monitor/blob/master/doc/manta-monitor-deployment.md#honeybadger) api key.
   This is OPTIONAL. By default, the tool will not report any errors to [Honeybadger](https://www.honeybadger.io/), but
   if you want to keep a track of errors and exceptions arising out of the application, then you can create a free trail
@@ -108,7 +120,7 @@ some latency metrics right out of the box.
 Open grafana UI in the browser http://localhost:3000.
 
 #### Deployment on a KVM/VM
-Open grafana UI in your local browser and navigate to the public ip address of your KVM/VM i.e http://<public ip>:3000
+Open grafana UI in your local browser and navigate to the public ip address of your KVM/VM i.e http://<public-ip>:3000
 
 The default userid and password is admin/admin.
 
