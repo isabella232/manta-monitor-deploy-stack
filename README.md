@@ -22,12 +22,12 @@ The following applies to both the OS:
 * Environment variables: Make sure you have exported the relevant MANTA env variables as:
 
 ``` 
-export MANTA_USER=qauser
+export MANTA_USER=<The manta user name>
 export MANTA_PUBLIC_KEY=$(cat $HOME/.ssh/id_rsa.pub)
 export MANTA_PRIVATE_KEY=$(cat $HOME/.ssh/id_rsa | base64 -b0) #FOR MAC
                 OR
 export MANTA_PRIVATE_KEY=$(cat $HOME/.ssh/id_rsa | base64 -w0) #FOR LINUX
-export MANTA_URL=https://us-east.manta.joyent.com
+export MANTA_URL=<The complete manta url or https://ip address of the loadbalancer >
 
 ```
 * [Honeybadger](https://github.com/joyent/manta-monitor/blob/master/doc/manta-monitor-deployment.md#honeybadger) api key.
