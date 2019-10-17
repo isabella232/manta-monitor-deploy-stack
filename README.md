@@ -44,7 +44,40 @@ export MANTA_URL=https://us-east.manta.joyent.com
   
    ```
     mput -f manta-monitor-config.json ~~/stor/
-    ```
+   ```
+   Once uploaded to the manta store, the CONFIG_FILE environment variable in the docker-compose.yml can be set as:
+   
+   ```
+    services:
+       manta-monitor:
+         image: joyent/manta-monitor:buckets
+         container_name: "manta-monitor"
+         tmpfs:
+           - /opt/manta-monitor/tmp
+         logging:
+           driver: "json-file"
+           options:
+             max-size: "10m"
+             max-file: "3"
+         ports:
+           - 8090:8090
+         environment:
+           - JAVA_ENV=development
+           - HONEYBADGER_API_KEY=""
+           - CONFIG_FILE=manta:///$MANTA_USER/stor/manta-monitor-config.json
+           - MANTA_USER=$MANTA_USER
+           - MANTA_URL=$MANTA_URL
+           - MANTA_PUBLIC_KEY=$MANTA_PUBLIC_KEY
+           - MANTA_PRIVATE_KEY=$MANTA_PRIVATE_KEY
+           - MANTA_TIMEOUT=4000
+           - MANTA_METRIC_REPORTER_MODE=JMX
+           - MANTA_HTTP_RETRIES=3
+           - JETTY_SERVER_PORT=8090
+           - ENABLE_TLS=false
+           - MANTA_TLS_INSECURE=1
+   
+   ```
+  
   OR
   
   Use [docker-compose volumes](https://docs.docker.com/compose/compose-file/compose-file-v2/#volume-configuration-reference)
@@ -81,7 +114,9 @@ export MANTA_URL=https://us-east.manta.joyent.com
         - ENABLE_TLS=false
         - MANTA_TLS_INSECURE=1
   ```
-  
+
+The above *volumes* option is best suited for local use, for instance, your desktop/laptop.
+
 ## Usage
 
 ### OPTION 1: Run on your laptop
